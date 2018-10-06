@@ -5,6 +5,7 @@ from itertools import chain
 import time
 from typing import Callable
 from typing import Type
+from typing import Any
 
 from ppb.abc import Engine
 from ppb.events import EventMixin
@@ -16,6 +17,9 @@ from ppb.utils import LoggingMixin
 
 
 class GameEngine(Engine, EventMixin, LoggingMixin):
+    """
+    Top-level game engine that coordinates scenes and systems.
+    """
 
     def __init__(self, first_scene: Type, *,
                  systems=(Renderer, Updater, PygameEventPoller),
@@ -42,19 +46,22 @@ class GameEngine(Engine, EventMixin, LoggingMixin):
 
     @property
     def current_scene(self):
+        """
+        The topmost, active scene.
+        """
         try:
             return self.scenes[-1]
         except IndexError:
             return None
 
     def __enter__(self):
-        self.logger.info("Entering context")
+        self.logger.info("Entering engine")
         self.start_systems()
         self.entered = True
         return self
 
     def __exit__(self, exc_type, exc_val, exc_tb):
-        self.logger.info("Exiting context")
+        self.logger.info("Exiting engine")
         self.entered = False
         self.exit_stack.close()
 
@@ -68,6 +75,9 @@ class GameEngine(Engine, EventMixin, LoggingMixin):
             self.exit_stack.enter_context(system)
 
     def run(self):
+        """
+        Initialize and run the engine, blocking until a Quit event has occurred.
+        """
         if not self.entered:
             with self:
                 self.start()
@@ -92,6 +102,13 @@ class GameEngine(Engine, EventMixin, LoggingMixin):
             self.manage_scene()
 
     def activate(self, next_scene: dict):
+        """
+        Push a scene onto the scene stack. next_scene has these keys:
+
+        * scene_class: the class of the scene
+        * args: positional arguments to pass to the scene class
+        * kwargs: keyword arguments to pass to the scene class
+        """
         scene = next_scene["scene_class"]
         if scene is None:
             return
@@ -100,6 +117,9 @@ class GameEngine(Engine, EventMixin, LoggingMixin):
         self.scenes.append(scene(self, *args, **kwargs))
 
     def signal(self, event):
+        """
+        Publish an event
+        """
         self.events.append(event)
 
     def publish(self):
@@ -120,8 +140,11 @@ class GameEngine(Engine, EventMixin, LoggingMixin):
         if next_scene:
             self.activate(next_scene)
 
-    def on_quit(self, quit_event: 'Quit', signal: Callable):  #TODO: Look up syntax for Callable typing.
+    def on_quit(self, quit_event: 'Quit', signal: Callable[[Any], None]):
         self.running = False
 
     def register(self, event_type, attribute, value):
+        """
+        Deprecated.
+        """
         self.event_extensions[event_type][attribute] = value
