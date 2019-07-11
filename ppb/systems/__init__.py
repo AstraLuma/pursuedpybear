@@ -6,19 +6,9 @@ import pygame
 import ppb.events as events
 import ppb.flags as flags
 
+from ppb.basetypes import System
+
 default_resolution = 800, 600
-
-
-class System(events.EventMixin):
-
-    def __init__(self, **_):
-        pass
-
-    def __enter__(self):
-        pass
-
-    def __exit__(self, exc_type, exc_val, exc_tb):
-        pass
 
 
 from ppb.systems.pg import EventPoller as PygameEventPoller  # To not break old imports.

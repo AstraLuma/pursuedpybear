@@ -3,7 +3,7 @@ from pathlib import Path
 from typing import Union
 
 from ppb import Vector
-from ppb.events import EventMixin
+from ppb.basetypes import EventMixin
 from ppb.utils import FauxFloat
 
 import ppb_vector

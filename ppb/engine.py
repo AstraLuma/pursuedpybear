@@ -11,8 +11,8 @@ from typing import Type
 from typing import Union
 
 import ppb.events as events
+from ppb.basetypes import EventMixin
 from ppb.events import StartScene
-from ppb.events import EventMixin
 from ppb.events import Quit
 from ppb.systems import PygameEventPoller
 from ppb.systems import Renderer

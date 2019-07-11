@@ -1,9 +1,9 @@
 from pytest import mark
 from pytest import raises
 
-from ppb.events import BadEventHandlerException
-from ppb.events import camel_to_snake
-from ppb.events import EventMixin
+from ppb.basetypes import BadEventHandlerException
+from ppb.basetypes import camel_to_snake
+from ppb.basetypes import EventMixin
 
 
 def test_eventmixin():
